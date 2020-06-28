@@ -26,11 +26,13 @@
 (: weights->normalized-weights (Symbol (Sequenceof Real) -> (Listof Nonnegative-Flonum)))
 (define (weights->normalized-weights name ws)
   (let ([ws  (weights->list name ws)])
-    (when (empty? ws) (raise-argument-error name "nonempty (Sequenceof Real)" ws))
+    (cond [(empty? ws)
+           (raise-argument-error name "nonempty (Sequenceof Real)" ws)]
+          [else
     (define max-w (find-near-pow2 (apply max ws)))
     (let ([ws  (map (λ: ([w : Real]) (/ w max-w)) ws)])
       (define total-w (sum ws))
-      (map (λ: ([w : Real]) (assert (fl (/ w total-w)) nonnegative?)) ws))))
+      (map (λ: ([w : Real]) (assert (fl (/ w total-w)) nonnegative?)) ws))])))
 
 ;; ===================================================================================================
 
@@ -58,7 +60,9 @@
                     -> (Values (Listof A) (Listof Positive-Flonum)))))
 (define (sequences->normalized-weighted-samples name xs ws)
   (let-values ([(xs ws)  (sequences->weighted-samples name xs ws)])
-    (when (empty? xs) (raise-argument-error name "nonempty (Sequenceof A)" 0 xs ws))
+    (cond [(or (empty? xs) (empty? ws))
+           (raise-argument-error name "nonempty (Sequenceof A)" 0 xs ws)]
+          [else
     (define max-w (find-near-pow2 (assert (apply max ws) nonnegative?)))
     (let ([ws  (map (λ: ([w : Nonnegative-Real]) (/ w max-w)) ws)])
       (define total-w (sum ws))
@@ -72,7 +76,7 @@
                (cond [(w . > . 0.0)
                       (loop (rest xs) (rest ws) (cons (first xs) new-xs) (cons w new-ws))]
                      [else
-                      (loop (rest xs) (rest ws) new-xs new-ws)])])))))
+                      (loop (rest xs) (rest ws) new-xs new-ws)])])))])))
 
 (: sequence->normalized-weighted-samples
    (All (A) (Symbol (Sequenceof A) -> (Values (Listof A) (Listof Positive-Flonum)))))

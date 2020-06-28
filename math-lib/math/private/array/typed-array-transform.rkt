@@ -153,7 +153,7 @@
 ;; ===================================================================================================
 ;; Append
 
-(: array-broadcast-for-append (All (A) ((Listof (Array A))
+(: array-broadcast-for-append (All (A) ((List* (Array A) (Listof (Array A)))
                                         Integer -> (Values (Listof (Array A))
                                                            (Listof Index)))))
 (define (array-broadcast-for-append arrs k)
@@ -178,7 +178,8 @@
 (: array-append* (All (A) (case-> ((Listof (Array A)) -> (Array A))
                                   ((Listof (Array A)) Integer -> (Array A)))))
 (define (array-append* arrs [k 0])
-  (when (null? arrs) (raise-argument-error 'array-append* "nonempty (Listof (Array A))" arrs))
+  (cond [(null? arrs) (raise-argument-error 'array-append* "nonempty (Listof (Array A))" arrs)]
+        [else
   (let-values ([(arrs dks)  (array-broadcast-for-append arrs k)])
     (define new-dk (apply + dks))
     (cond
@@ -209,4 +210,4 @@
                   (unsafe-vector-set! js k (unsafe-vector-ref old-jks jk))
                   (define v ((unsafe-vector-ref old-procs jk) js))
                   (unsafe-vector-set! js k jk)
-                  v)))])))
+                  v)))]))]))

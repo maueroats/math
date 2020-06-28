@@ -49,7 +49,7 @@ See "How to Measure Errors" in the LAPACK manual for more details:
 ;; When M is a column matrix, this is equivalent to matrix-1norm
 (define (matrix-op-1norm M)
   (parameterize ([array-strictness #f])
-    (assert (apply max (map matrix-1norm (matrix-cols M))) nonnegative?)))
+    (assert (apply max -inf.0 (map matrix-1norm (matrix-cols M))) nonnegative?)))
 
 (: matrix-op-2norm (case-> ((Matrix Flonum) -> Nonnegative-Flonum)
                            ((Matrix Real) -> Nonnegative-Real)
@@ -68,7 +68,7 @@ See "How to Measure Errors" in the LAPACK manual for more details:
 ;; When M is a column matrix, this is equivalent to matrix-inf-norm
 (define (matrix-op-inf-norm M)
   (parameterize ([array-strictness #f])
-    (assert (apply max (map matrix-1norm (matrix-rows M))) nonnegative?)))
+    (assert (apply max -inf.0 (map matrix-1norm (matrix-rows M))) nonnegative?)))
 
 (: matrix-basis-cos-angle (case-> ((Matrix Flonum) (Matrix Flonum) -> Flonum)
                                   ((Matrix Real) (Matrix Real) -> Real)
